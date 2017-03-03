@@ -202,7 +202,7 @@ function cloneRegexp(re) {
  * @return {mixed}        - The cloned variable.
  */
 function cloner(deep, item) {
-  if (!item || typeof item !== 'object' || item instanceof Error || item instanceof _monkey.MonkeyDefinition || item instanceof _monkey.Monkey || 'ArrayBuffer' in global && item instanceof ArrayBuffer) return item;
+  if (!item || typeof item !== 'object' || item instanceof Error || item instanceof _monkey.MonkeyDefinition || item instanceof _monkey.Monkey || typeof ArrayBuffer === 'function' && item instanceof ArrayBuffer) return item;
 
   // Array
   if (_type2.default.array(item)) {
@@ -230,18 +230,27 @@ function cloner(deep, item) {
   if (_type2.default.object(item)) {
     var o = {};
 
-    var k = void 0;
+    var _i = void 0,
+        _l = void 0,
+        k = void 0;
 
     // NOTE: could be possible to erase computed properties through `null`.
-    for (k in item) {
+    var props = Object.getOwnPropertyNames(item);
+    for (_i = 0, _l = props.length; _i < _l; _i++) {
+      k = props[_i];
       if (_type2.default.lazyGetter(item, k)) {
         Object.defineProperty(o, k, {
           get: Object.getOwnPropertyDescriptor(item, k).get,
           enumerable: true,
           configurable: true
         });
-      } else if (hasOwnProp.call(item, k)) {
-        o[k] = deep ? cloner(true, item[k]) : item[k];
+      } else {
+        Object.defineProperty(o, k, {
+          value: deep ? cloner(true, item[k]) : item[k],
+          enumerable: Object.getOwnPropertyDescriptor(item, k).enumerable,
+          writable: true,
+          configurable: true
+        });
       }
     }
     return o;
@@ -573,6 +582,11 @@ function solveUpdate(affectedPaths, comparedPaths) {
  * @return {array}                 - The spliced array.
  */
 function splice(array, startIndex, nb) {
+  for (var _len2 = arguments.length, elements = Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
+    elements[_key2 - 3] = arguments[_key2];
+  }
+
+  if (nb === undefined && arguments.length === 2) nb = array.length - startIndex;else if (nb === null || nb === undefined) nb = 0;else if (isNaN(+nb)) throw new Error('argument nb ' + nb + ' can not be parsed into a number!');
   nb = Math.max(0, nb);
 
   // Solving startIndex
@@ -582,11 +596,6 @@ function splice(array, startIndex, nb) {
   });
 
   // Positive index
-
-  for (var _len2 = arguments.length, elements = Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
-    elements[_key2 - 3] = arguments[_key2];
-  }
-
   if (startIndex >= 0) return array.slice(0, startIndex).concat(elements).concat(array.slice(startIndex + nb));
 
   // Negative index

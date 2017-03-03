@@ -1162,13 +1162,8 @@ exports.helpers = helpers;
 /**
  * Version
  */
-<<<<<<< HEAD
 
-Baobab.VERSION = '2.3.4';
-=======
 Baobab.VERSION = '2.4.3';
-module.exports = exports['default'];
->>>>>>> origin/patch-1
 
 },{"./cursor":3,"./helpers":4,"./monkey":5,"./type":6,"./update":7,"./watcher":8,"emmett":1}],3:[function(require,module,exports){
 'use strict';
@@ -2045,7 +2040,6 @@ makeSetter('merge', _type2.default.object);
 makeSetter('deepMerge', _type2.default.object);
 
 },{"./helpers":4,"./monkey":5,"./type":6,"emmett":1}],4:[function(require,module,exports){
-(function (global){
 'use strict';
 
 exports.__esModule = true;
@@ -2250,7 +2244,7 @@ function cloneRegexp(re) {
  * @return {mixed}        - The cloned variable.
  */
 function cloner(deep, item) {
-  if (!item || typeof item !== 'object' || item instanceof Error || item instanceof _monkey.MonkeyDefinition || item instanceof _monkey.Monkey || 'ArrayBuffer' in global && item instanceof ArrayBuffer) return item;
+  if (!item || typeof item !== 'object' || item instanceof Error || item instanceof _monkey.MonkeyDefinition || item instanceof _monkey.Monkey || typeof ArrayBuffer === 'function' && item instanceof ArrayBuffer) return item;
 
   // Array
   if (_type2.default.array(item)) {
@@ -2278,23 +2272,15 @@ function cloner(deep, item) {
   if (_type2.default.object(item)) {
     var o = {};
 
-<<<<<<< HEAD
-    var k = void 0;
-
-    // NOTE: could be possible to erase computed properties through `null`.
-    for (k in item) {
-      if (_type2.default.lazyGetter(item, k)) {
-=======
-    var i = undefined,
-        l = undefined,
-        k = undefined;
+    var _i = void 0,
+        _l = void 0,
+        k = void 0;
 
     // NOTE: could be possible to erase computed properties through `null`.
     var props = Object.getOwnPropertyNames(item);
-    for (i = 0, l = props.length; i < l; i++) {
-      k = props[i];
-      if (_type2['default'].lazyGetter(item, k)) {
->>>>>>> origin/patch-1
+    for (_i = 0, _l = props.length; _i < _l; _i++) {
+      k = props[_i];
+      if (_type2.default.lazyGetter(item, k)) {
         Object.defineProperty(o, k, {
           get: Object.getOwnPropertyDescriptor(item, k).get,
           enumerable: true,
@@ -2673,7 +2659,6 @@ var uniqid = function () {
 
 exports.uniqid = uniqid;
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./monkey":5,"./type":6}],5:[function(require,module,exports){
 'use strict';
 

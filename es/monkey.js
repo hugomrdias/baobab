@@ -250,7 +250,7 @@ export var Monkey = function () {
 
     // Unbinding events
     this.tree.off('write', this.writeListener);
-    this.tree.off('_monkey', this.monkeyListener);
+    this.tree.off('_monkey', this.recursiveListener);
     this.state.killed = true;
 
     // Deleting properties

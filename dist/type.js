@@ -112,9 +112,10 @@ type.primitive = function (target) {
  * @return {boolean}
  */
 type.splicer = function (target) {
-  if (!type.array(target) || target.length < 2) return false;
+  if (!type.array(target) || target.length < 1) return false;
+  if (target.length > 1 && isNaN(+target[1])) return false;
 
-  return anyOf(target[0], ['number', 'function', 'object']) && type.number(target[1]);
+  return anyOf(target[0], ['number', 'function', 'object']);
 };
 
 /**
