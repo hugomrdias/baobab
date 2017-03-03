@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.4.3
+
+* Better `tree/cursor.splice` ([@jrust](https://github.com/jrust)).
+
+## v2.4.2
+
+* Fixing monkey-related memory leak ([@jrust](https://github.com/jrust)).
+
+## v2.4.1
+
+* Fixing `tree/cursor.splice` descriptor ([@Nimelrian](https://github.com/Nimelrian)).
+
+## v2.4.0
+
+* Handling non-enumerable properties ([@BrendanAnnable](https://github.com/BrendanAnnable)).
+
 ## v2.3.4
 
 * Fixing an issue concerning objects created through `Object.create(null)` ([@fmal](https://github.com/fmal)).

@@ -2,7 +2,7 @@
  * Baobab
  *
  * Homepage: https://github.com/Yomguithereal/baobab
- * Version: 2.3.4
+ * Version: 2.4.3
  * Author: Yomguithereal (Guillaume Plique)
  * License: MIT
  */
@@ -1162,8 +1162,13 @@ exports.helpers = helpers;
 /**
  * Version
  */
+<<<<<<< HEAD
 
 Baobab.VERSION = '2.3.4';
+=======
+Baobab.VERSION = '2.4.3';
+module.exports = exports['default'];
+>>>>>>> origin/patch-1
 
 },{"./cursor":3,"./helpers":4,"./monkey":5,"./type":6,"./update":7,"./watcher":8,"emmett":1}],3:[function(require,module,exports){
 'use strict';
@@ -2273,18 +2278,35 @@ function cloner(deep, item) {
   if (_type2.default.object(item)) {
     var o = {};
 
+<<<<<<< HEAD
     var k = void 0;
 
     // NOTE: could be possible to erase computed properties through `null`.
     for (k in item) {
       if (_type2.default.lazyGetter(item, k)) {
+=======
+    var i = undefined,
+        l = undefined,
+        k = undefined;
+
+    // NOTE: could be possible to erase computed properties through `null`.
+    var props = Object.getOwnPropertyNames(item);
+    for (i = 0, l = props.length; i < l; i++) {
+      k = props[i];
+      if (_type2['default'].lazyGetter(item, k)) {
+>>>>>>> origin/patch-1
         Object.defineProperty(o, k, {
           get: Object.getOwnPropertyDescriptor(item, k).get,
           enumerable: true,
           configurable: true
         });
-      } else if (hasOwnProp.call(item, k)) {
-        o[k] = deep ? cloner(true, item[k]) : item[k];
+      } else {
+        Object.defineProperty(o, k, {
+          value: deep ? cloner(true, item[k]) : item[k],
+          enumerable: Object.getOwnPropertyDescriptor(item, k).enumerable,
+          writable: true,
+          configurable: true
+        });
       }
     }
     return o;
@@ -2616,6 +2638,11 @@ function solveUpdate(affectedPaths, comparedPaths) {
  * @return {array}                 - The spliced array.
  */
 function splice(array, startIndex, nb) {
+  for (var _len2 = arguments.length, elements = Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
+    elements[_key2 - 3] = arguments[_key2];
+  }
+
+  if (nb === undefined && arguments.length === 2) nb = array.length - startIndex;else if (nb === null || nb === undefined) nb = 0;else if (isNaN(+nb)) throw new Error('argument nb ' + nb + ' can not be parsed into a number!');
   nb = Math.max(0, nb);
 
   // Solving startIndex
@@ -2625,11 +2652,6 @@ function splice(array, startIndex, nb) {
   });
 
   // Positive index
-
-  for (var _len2 = arguments.length, elements = Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
-    elements[_key2 - 3] = arguments[_key2];
-  }
-
   if (startIndex >= 0) return array.slice(0, startIndex).concat(elements).concat(array.slice(startIndex + nb));
 
   // Negative index
@@ -2920,7 +2942,7 @@ var Monkey = exports.Monkey = function () {
 
     // Unbinding events
     this.tree.off('write', this.writeListener);
-    this.tree.off('_monkey', this.monkeyListener);
+    this.tree.off('_monkey', this.recursiveListener);
     this.state.killed = true;
 
     // Deleting properties
@@ -3049,9 +3071,10 @@ type.primitive = function (target) {
  * @return {boolean}
  */
 type.splicer = function (target) {
-  if (!type.array(target) || target.length < 2) return false;
+  if (!type.array(target) || target.length < 1) return false;
+  if (target.length > 1 && isNaN(+target[1])) return false;
 
-  return anyOf(target[0], ['number', 'function', 'object']) && type.number(target[1]);
+  return anyOf(target[0], ['number', 'function', 'object']);
 };
 
 /**

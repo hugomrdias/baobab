@@ -175,7 +175,7 @@ function cloner(deep, item) {
       item instanceof Error ||
       item instanceof MonkeyDefinition ||
       item instanceof Monkey ||
-      ('ArrayBuffer' in global && item instanceof ArrayBuffer))
+      (typeof ArrayBuffer === 'function' && item instanceof ArrayBuffer))
     return item;
 
   // Array
@@ -206,10 +206,12 @@ function cloner(deep, item) {
   if (type.object(item)) {
     const o = {};
 
-    let k;
+    let i, l, k;
 
     // NOTE: could be possible to erase computed properties through `null`.
-    for (k in item) {
+    const props = Object.getOwnPropertyNames(item);
+    for (i = 0, l = props.length; i < l; i++) {
+      k = props[i];
       if (type.lazyGetter(item, k)) {
         Object.defineProperty(o, k, {
           get: Object.getOwnPropertyDescriptor(item, k).get,
@@ -217,8 +219,13 @@ function cloner(deep, item) {
           configurable: true
         });
       }
-      else if (hasOwnProp.call(item, k)) {
-        o[k] = deep ? cloner(true, item[k]) : item[k];
+      else {
+        Object.defineProperty(o, k, {
+          value: deep ? cloner(true, item[k]) : item[k],
+          enumerable: Object.getOwnPropertyDescriptor(item, k).enumerable,
+          writable: true,
+          configurable: true
+        });
       }
     }
     return o;
@@ -563,6 +570,12 @@ export function solveUpdate(affectedPaths, comparedPaths) {
  * @return {array}                 - The spliced array.
  */
 export function splice(array, startIndex, nb, ...elements) {
+  if (nb === undefined && arguments.length === 2)
+    nb = array.length - startIndex;
+  else if (nb === null || nb === undefined)
+    nb = 0;
+  else if (isNaN(+nb))
+    throw new Error(`argument nb ${nb} can not be parsed into a number!`);
   nb = Math.max(0, nb);
 
   // Solving startIndex
