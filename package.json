@@ -14,7 +14,7 @@
     "babelify": "^6.1.2",
     "benchmark": "^1.0.0",
     "browserify": "^12.0.1",
-    "eslint": "^1.1.0",
+    "eslint": "^7.4.0",
     "lodash": "^3.6.0",
     "mkdirp": "^0.5.1",
     "mocha": "^2.0.1",
